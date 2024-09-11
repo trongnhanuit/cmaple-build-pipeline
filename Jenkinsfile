@@ -7,6 +7,7 @@
 properties([
     parameters([
         string(name: 'BRANCH', defaultValue: 'main', description: 'Branch to build'),
+        booleanParam(defaultValue: false, description: 'Use CIBIV cluster?', name: 'USE_CIBIV'),
     ])
 ])
 pipeline {
@@ -14,6 +15,7 @@ pipeline {
     environment {
         GITHUB_REPO_URL = "https://github.com/iqtree/cmaple.git"
         NCI_ALIAS = "gadi"
+        SSH_COMP_SERVER = ""
         WORKING_DIR = "/scratch/dx61/tl8625/cmaple/ci-cd"
         GITHUB_REPO_NAME = "cmaple"
         BUILD_SCRIPTS = "${WORKING_DIR}/build-scripts"
@@ -29,6 +31,20 @@ pipeline {
 
     }
     stages {
+    stage('Init variables') {
+            steps {
+                script {
+                    if (params.USE_CIBIV) {
+                    	NCI_ALIAS = "eingang"
+                    	SSH_COMP_SERVER = "ssh cox << EOF"
+                    	WORKING_DIR = "/project/AliSim/cmaple"
+        				BUILD_SCRIPTS = "${WORKING_DIR}/build-scripts"
+        				REPO_DIR = "${WORKING_DIR}/${GITHUB_REPO_NAME}"
+       					BUILD_OUTPUT_DIR = "${WORKING_DIR}/builds"
+                    }
+                }
+            }
+        }
     // ssh to NCI_ALIAS and scp build-scripts to working dir in NCI
         stage('Copy build scripts') {
             steps {
@@ -69,7 +85,7 @@ pipeline {
                 script {
                     sh """
                         ssh ${NCI_ALIAS} << EOF
-
+						${SSH_COMP_SERVER}
                                               
                         echo "building CMAPLE"                        
                         sh ${BUILD_SCRIPTS}/jenkins-cmake-build-default.sh ${BUILD_DEFAULT} ${REPO_DIR}
