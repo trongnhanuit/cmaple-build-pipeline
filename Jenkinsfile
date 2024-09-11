@@ -31,16 +31,17 @@ pipeline {
 
     }
     stages {
-    stage('Init variables') {
+    	stage('Init variables') {
             steps {
                 script {
                     if (params.USE_CIBIV) {
                     	NCI_ALIAS = "eingang"
-                    	SSH_COMP_SERVER = "ssh cox << EOF"
+                    	SSH_COMP_SERVER = "ssh -tt cox << EOF"
                     	WORKING_DIR = "/project/AliSim/cmaple"
         				BUILD_SCRIPTS = "${WORKING_DIR}/build-scripts"
         				REPO_DIR = "${WORKING_DIR}/${GITHUB_REPO_NAME}"
        					BUILD_OUTPUT_DIR = "${WORKING_DIR}/builds"
+       					BUILD_DEFAULT = "${BUILD_OUTPUT_DIR}/build-default"
                     }
                 }
             }
@@ -84,7 +85,7 @@ pipeline {
             steps {
                 script {
                     sh """
-                        ssh ${NCI_ALIAS} << EOF
+                        ssh -tt ${NCI_ALIAS} << EOF
 						${SSH_COMP_SERVER}
                                               
                         echo "building CMAPLE"                        
