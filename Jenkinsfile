@@ -88,7 +88,8 @@ pipeline {
                         ssh -tt ${NCI_ALIAS} << EOF
 						${SSH_COMP_SERVER}
                                               
-                        echo "building CMAPLE"                        
+                        echo "building CMAPLE"  
+                        chmod +x ${BUILD_SCRIPTS}/jenkins-cmake-build-default.sh                        
                         sh ${BUILD_SCRIPTS}/jenkins-cmake-build-default.sh ${BUILD_DEFAULT} ${REPO_DIR}
                         
                        
