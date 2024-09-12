@@ -7,7 +7,7 @@
 properties([
     parameters([
         string(name: 'BRANCH', defaultValue: 'main', description: 'Branch to build'),
-        booleanParam(defaultValue: false, description: 'Use CECC cluster?', name: 'USE_CECC_CLUSTER'),
+        booleanParam(defaultValue: false, description: 'Use CIBIV cluster?', name: 'USE_CIBIV'),
     ])
 ])
 pipeline {
@@ -34,7 +34,7 @@ pipeline {
     	stage('Init variables') {
             steps {
                 script {
-                    if (params.USE_CECC_CLUSTER) {
+                    if (params.USE_CIBIV) {
                     	NCI_ALIAS = "eingang"
                     	SSH_COMP_NODE = " ssh -tt cox "
                     	WORKING_DIR = "/project/AliSim/cmaple"
