@@ -16,6 +16,7 @@ pipeline {
         GITHUB_REPO_URL = "https://github.com/iqtree/cmaple.git"
         NCI_ALIAS = "gadi"
         SSH_COMP_SERVER = ""
+        EXIT_COMP_SERVER = ""
         WORKING_DIR = "/scratch/dx61/tl8625/cmaple/ci-cd"
         GITHUB_REPO_NAME = "cmaple"
         BUILD_SCRIPTS = "${WORKING_DIR}/build-scripts"
@@ -37,6 +38,7 @@ pipeline {
                     if (params.USE_CIBIV) {
                     	NCI_ALIAS = "eingang"
                     	SSH_COMP_SERVER = "ssh -tt cox << EOF"
+                    	EXIT_COMP_SERVER = "exit"
                     	WORKING_DIR = "/project/AliSim/cmaple"
         				BUILD_SCRIPTS = "${WORKING_DIR}/build-scripts"
         				REPO_DIR = "${WORKING_DIR}/${GITHUB_REPO_NAME}"
@@ -93,6 +95,7 @@ pipeline {
                         sh ${BUILD_SCRIPTS}/jenkins-cmake-build-default.sh ${BUILD_DEFAULT} ${REPO_DIR}
                         
                        
+                        ${EXIT_COMP_SERVER}
                         exit
                         EOF
                         """
