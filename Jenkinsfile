@@ -7,7 +7,7 @@
 properties([
     parameters([
         string(name: 'BRANCH', defaultValue: 'main', description: 'Branch to build'),
-        booleanParam(defaultValue: false, description: 'Use CIBIV cluster?', name: 'USE_CIBIV'),
+        booleanParam(defaultValue: false, description: 'Use CECC cluster?', name: 'USE_CECC_CLUSTER'),
     ])
 ])
 pipeline {
@@ -15,8 +15,6 @@ pipeline {
     environment {
         GITHUB_REPO_URL = "https://github.com/iqtree/cmaple.git"
         NCI_ALIAS = "gadi"
-        SSH_COMP_SERVER = ""
-        EXIT_COMP_SERVER = ""
         WORKING_DIR = "/scratch/dx61/tl8625/cmaple/ci-cd"
         GITHUB_REPO_NAME = "cmaple"
         BUILD_SCRIPTS = "${WORKING_DIR}/build-scripts"
@@ -35,11 +33,9 @@ pipeline {
     	stage('Init variables') {
             steps {
                 script {
-                    if (params.USE_CIBIV) {
-                    	NCI_ALIAS = "eingang"
-                    	SSH_COMP_SERVER = "ssh cox ; "
-        				EXIT_COMP_SERVER = "; exit"
-                    	WORKING_DIR = "/project/AliSim/cmaple"
+                    if (params.USE_CECC_CLUSTER) {
+                    	NCI_ALIAS = "cecc_cluster"
+                    	WORKING_DIR = "/home/remote/u7091034/cmaple"
         				BUILD_SCRIPTS = "${WORKING_DIR}/build-scripts"
         				REPO_DIR = "${WORKING_DIR}/${GITHUB_REPO_NAME}"
        					BUILD_OUTPUT_DIR = "${WORKING_DIR}/builds"
@@ -91,7 +87,8 @@ pipeline {
                     sh """
                         ssh -tt ${NCI_ALIAS} << EOF
                         
-                        ${SSH_COMP_SERVER} chmod +x ${BUILD_SCRIPTS}/jenkins-cmake-build-default.sh ; sh ${BUILD_SCRIPTS}/jenkins-cmake-build-default.sh ${BUILD_DEFAULT} ${REPO_DIR} ${EXIT_COMP_SERVER}
+                        chmod +x ${BUILD_SCRIPTS}/jenkins-cmake-build-default.sh 
+                        sh ${BUILD_SCRIPTS}/jenkins-cmake-build-default.sh ${BUILD_DEFAULT} ${REPO_DIR} 
                        	
                         exit
                         EOF
