@@ -84,8 +84,15 @@ pipeline {
         stage("Build: Build Default") {
             steps {
                 script {
+                    LOAD_MODULES=""
+                    if (params.USE_CECC_CLUSTER) {
+                        LOAD_MODULES="module load CMake"
+                    }
+                    
                     sh """
                         ssh -tt ${NCI_ALIAS} << EOF
+                        
+                        ${LOAD_MODULES}
                         
                         chmod +x ${BUILD_SCRIPTS}/jenkins-cmake-build-default.sh 
                         sh ${BUILD_SCRIPTS}/jenkins-cmake-build-default.sh ${BUILD_DEFAULT} ${REPO_DIR} 
