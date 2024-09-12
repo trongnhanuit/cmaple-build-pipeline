@@ -37,8 +37,8 @@ pipeline {
                 script {
                     if (params.USE_CIBIV) {
                     	NCI_ALIAS = "eingang"
-                    	SSH_COMP_SERVER = "ssh cox"
-        				EXIT_COMP_SERVER = "exit"
+                    	SSH_COMP_SERVER = "ssh cox && "
+        				EXIT_COMP_SERVER = "&& exit"
                     	WORKING_DIR = "/project/AliSim/cmaple"
         				BUILD_SCRIPTS = "${WORKING_DIR}/build-scripts"
         				REPO_DIR = "${WORKING_DIR}/${GITHUB_REPO_NAME}"
@@ -89,15 +89,9 @@ pipeline {
             steps {
                 script {
                     sh """
-                        ssh ${NCI_ALIAS} << EOF
+                        ssh -tt ${NCI_ALIAS} << EOF
                         
-                        ${SSH_COMP_SERVER}
-                                              
-                        echo "building CMAPLE"  
-                        chmod +x ${BUILD_SCRIPTS}/jenkins-cmake-build-default.sh                        
-                        sh ${BUILD_SCRIPTS}/jenkins-cmake-build-default.sh ${BUILD_DEFAULT} ${REPO_DIR}
-                        
-                       	${EXIT_COMP_SERVER}
+                        ${SSH_COMP_SERVER} echo "building CMAPLE"  && chmod +x ${BUILD_SCRIPTS}/jenkins-cmake-build-default.sh && sh ${BUILD_SCRIPTS}/jenkins-cmake-build-default.sh ${BUILD_DEFAULT} ${REPO_DIR} ${EXIT_COMP_SERVER}
                        	
                         exit
                         EOF
