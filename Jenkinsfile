@@ -15,6 +15,8 @@ pipeline {
     environment {
         GITHUB_REPO_URL = "https://github.com/iqtree/cmaple.git"
         NCI_ALIAS = "gadi"
+        SSH_COMP_SERVER = ""
+        EXIT_COMP_SERVER = ""
         WORKING_DIR = "/scratch/dx61/tl8625/cmaple/ci-cd"
         GITHUB_REPO_NAME = "cmaple"
         BUILD_SCRIPTS = "${WORKING_DIR}/build-scripts"
@@ -35,6 +37,8 @@ pipeline {
                 script {
                     if (params.USE_CIBIV) {
                     	NCI_ALIAS = "eingang"
+                    	SSH_COMP_SERVER = "ssh cox"
+        				EXIT_COMP_SERVER = "exit"
                     	WORKING_DIR = "/project/AliSim/cmaple"
         				BUILD_SCRIPTS = "${WORKING_DIR}/build-scripts"
         				REPO_DIR = "${WORKING_DIR}/${GITHUB_REPO_NAME}"
@@ -50,7 +54,8 @@ pipeline {
                 script {
                     sh "pwd"
                     sh """
-                        ssh ${NCI_ALIAS} << EOF
+                        ssh -tt ${NCI_ALIAS} << EOF
+                        
                         mkdir -p ${WORKING_DIR}
                         mkdir -p ${BUILD_SCRIPTS}
                         exit
@@ -64,7 +69,8 @@ pipeline {
             steps {
                 script {
                     sh """
-                        ssh ${NCI_ALIAS} << EOF
+                        ssh -tt ${NCI_ALIAS} << EOF
+                        
                         mkdir -p ${WORKING_DIR}
                         cd  ${WORKING_DIR}
                         git clone --recursive ${GITHUB_REPO_URL}
@@ -84,12 +90,14 @@ pipeline {
                 script {
                     sh """
                         ssh -tt ${NCI_ALIAS} << EOF
+                        
+                        ${SSH_COMP_SERVER}
                                               
                         echo "building CMAPLE"  
                         chmod +x ${BUILD_SCRIPTS}/jenkins-cmake-build-default.sh                        
                         sh ${BUILD_SCRIPTS}/jenkins-cmake-build-default.sh ${BUILD_DEFAULT} ${REPO_DIR}
                         
-                       
+                       	${EXIT_COMP_SERVER}
                         exit
                         EOF
                         """
@@ -100,7 +108,7 @@ pipeline {
         stage ('Verify') {
             steps {
                 script {
-                    sh "ssh ${NCI_ALIAS} 'cd ${WORKING_DIR} && ls -l'"
+                    sh "ssh -tt ${NCI_ALIAS} 'cd ${WORKING_DIR} && ls -l'"
 
                 }
             }

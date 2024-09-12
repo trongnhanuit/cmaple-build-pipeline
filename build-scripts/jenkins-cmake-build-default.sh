@@ -29,5 +29,5 @@ echo "Building CMAPLE"
 mkdir -p "$work_dir"
 cd $work_dir
 #cmake -DCMAKE_CXX_FLAGS="$LDFLAGS $CPPFLAGS" -DCMAKE_C_COMPILER=mpicc -DCMAKE_CXX_COMPILER=mpicxx -DEIGEN3_INCLUDE_DIR=/apps/eigen/3.3.7/include/eigen3 $code_dir
-cmake $code_dir
+cmake -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ $code_dir
 make -j
