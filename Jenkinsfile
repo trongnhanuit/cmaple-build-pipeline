@@ -89,7 +89,7 @@ pipeline {
             steps {
                 script {
                     sh """
-                        ssh -tt ${NCI_ALIAS} << EOF
+                        ssh ${NCI_ALIAS} << EOF
                         
                         ${SSH_COMP_SERVER}
                                               
@@ -98,6 +98,7 @@ pipeline {
                         sh ${BUILD_SCRIPTS}/jenkins-cmake-build-default.sh ${BUILD_DEFAULT} ${REPO_DIR}
                         
                        	${EXIT_COMP_SERVER}
+                       	
                         exit
                         EOF
                         """
