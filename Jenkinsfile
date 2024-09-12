@@ -15,6 +15,7 @@ pipeline {
     environment {
         GITHUB_REPO_URL = "https://github.com/iqtree/cmaple.git"
         NCI_ALIAS = "gadi"
+        SSH_COMP_NODE = ""
         WORKING_DIR = "/scratch/dx61/tl8625/cmaple/ci-cd"
         GITHUB_REPO_NAME = "cmaple"
         BUILD_SCRIPTS = "${WORKING_DIR}/build-scripts"
@@ -34,8 +35,9 @@ pipeline {
             steps {
                 script {
                     if (params.USE_CECC_CLUSTER) {
-                    	NCI_ALIAS = "cecc_cluster"
-                    	WORKING_DIR = "/home/remote/u7091034/cmaple"
+                    	NCI_ALIAS = "eingang"
+                    	SSH_COMP_NODE = " ssh -tt cox "
+                    	WORKING_DIR = "/project/AliSim/cmaple"
         				BUILD_SCRIPTS = "${WORKING_DIR}/build-scripts"
         				REPO_DIR = "${WORKING_DIR}/${GITHUB_REPO_NAME}"
        					BUILD_OUTPUT_DIR = "${WORKING_DIR}/builds"
@@ -84,15 +86,8 @@ pipeline {
         stage("Build: Build Default") {
             steps {
                 script {
-                    LOAD_MODULES=""
-                    if (params.USE_CECC_CLUSTER) {
-                        LOAD_MODULES="module load CMake"
-                    }
-                    
                     sh """
-                        ssh -tt ${NCI_ALIAS} << EOF
-                        
-                        ${LOAD_MODULES}
+                        ssh -tt ${NCI_ALIAS} ${SSH_COMP_NODE}<< EOF
                         
                         chmod +x ${BUILD_SCRIPTS}/jenkins-cmake-build-default.sh 
                         sh ${BUILD_SCRIPTS}/jenkins-cmake-build-default.sh ${BUILD_DEFAULT} ${REPO_DIR} 
