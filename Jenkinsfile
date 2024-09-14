@@ -15,7 +15,7 @@ pipeline {
     environment {
         GITHUB_REPO_URL = "https://github.com/iqtree/cmaple.git"
         NCI_ALIAS = "gadi"
-        SSH_COMP_NODE = ""
+        SSH_COMP_NODE = " "
         WORKING_DIR = "/scratch/dx61/tl8625/cmaple/ci-cd"
         GITHUB_REPO_NAME = "cmaple"
         BUILD_SCRIPTS = "${WORKING_DIR}/build-scripts"
