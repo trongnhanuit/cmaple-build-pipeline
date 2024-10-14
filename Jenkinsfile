@@ -75,6 +75,7 @@ pipeline {
                         cd ${GITHUB_REPO_NAME}
                         git checkout ${params.BRANCH}
                         mkdir -p ${BUILD_OUTPUT_DIR}
+                        mkdir -p ${BUILD_DEFAULT}
                         cd ${BUILD_DEFAULT}
                         rm -rf *
                         exit
